@@ -1,0 +1,13 @@
+core_cm4.h:2059:26:ITM_SendChar	4
+main.c:80:5:_write	2
+main.c:87:6:byte_to_bin	2
+main.c:92:6:readbin	2
+main.c:100:6:boolgenSPI	21
+main.c:189:5:main	1
+main.c:290:6:SystemClock_Config	4
+main.c:340:13:MX_SPI3_Init	2
+main.c:380:13:MX_USART2_UART_Init	2
+main.c:415:13:MX_USART3_UART_Init	2
+main.c:448:13:MX_DMA_Init	1
+main.c:470:13:MX_GPIO_Init	1
+main.c:491:6:Error_Handler	1

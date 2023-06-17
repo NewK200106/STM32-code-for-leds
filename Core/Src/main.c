@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,7 +39,8 @@
 #define zero 0b11000000
 #define one  0b11110000
 #define life 0b00000000
-
+#define CR	 0b00001101
+#define LF   0b00001010
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,6 +53,7 @@ SPI_HandleTypeDef hspi3;
 DMA_HandleTypeDef hdma_spi3_tx;
 
 UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart3;
 DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
@@ -63,6 +66,7 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -188,6 +192,10 @@ int main(void)
 	uint8_t R1,B1,G1,R2,G2,B2;
 	unsigned char Data[128];
 	unsigned char Rdata[128];
+	unsigned char BCom[6];//Receive data
+	uint8_t BSend[] = "AT\r\n";
+	uint8_t rx_data[50];
+	uint16_t rx_size=0;
 	char input[6];
 	  bool aR1[8];
 	  bool aG1[8];
@@ -218,6 +226,7 @@ int main(void)
   MX_DMA_Init();
   MX_SPI3_Init();
   MX_USART2_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -235,12 +244,14 @@ int main(void)
 //
 		//printf("piwo \n");
 //Odczyt z UART
+//		HAL_UART_Transmit(&huart3,BSend, sizeof(BSend), HAL_MAX_DELAY);//BlueTooth Transmit
+//		HAL_UART_Receive(&huart3, rx_data, sizeof(rx_data), HAL_MAX_DELAY);//BlueTooth receive
+//		HAL_Delay(1000);
+		HAL_UART_Receive(&huart3, (uint8_t*) input, 6, HAL_MAX_DELAY);//LED receive for diagnostics only
 
-
-		HAL_UART_Receive(&huart2, (uint8_t*) input, 6, HAL_MAX_DELAY);
-
-		printf("LED1: %d %d %d LED2: %d %d %d \n", input[0], input[1], input[2],
-				input[3], input[4], input[5]);
+		printf("Dupa %c",rx_data[3]);
+//		printf("LED1: %d %d %d LED2: %d %d %d \n", input[0], input[1], input[2],
+//				input[3], input[4], input[5]);
 
 		R1=(uint8_t*)input[0];
 		G1=(uint8_t*)input[1];
@@ -397,6 +408,41 @@ static void MX_USART2_UART_Init(void)
 }
 
 /**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 9600;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
   * Enable DMA controller clock
   */
 static void MX_DMA_Init(void)
@@ -423,11 +469,15 @@ static void MX_DMA_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
